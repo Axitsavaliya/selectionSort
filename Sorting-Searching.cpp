@@ -1,153 +1,121 @@
 #include <iostream>
-#include <vector>
-
 using namespace std;
 
-// Function to perform Selection Sort
-void selectionSort(vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        int minIndex = i;
-        for (int j = i + 1; j < n; j++) {
-            if (arr[j] < arr[minIndex]) {
-                minIndex = j;
+void selectionSort(int arr[], int size)
+{
+    for (int i = 0; i < size - 1; i++)
+    {
+        for (int j = i + 1; j < size; j++)
+        {
+            if (arr[j] < arr[i])
+            {
+                swap(arr[i], arr[j]);
             }
         }
-        swap(arr[i], arr[minIndex]);
     }
 }
 
-// Function to perform Merge Sort
-void merge(vector<int>& arr, int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
+void merge(int arr[], int left, int mid, int right)
+{
+    int i, j, k, temp[right - left + 1];
+    for (i = left, j = mid + 1, k = 0; i <= mid && j <= right; k++)
+        temp[k] = (arr[i] < arr[j]) ? arr[i++] : arr[j++];
+   for (; i <= mid; i++)
+        temp[k++] = arr[i];
+    for (; j <= right; j++)
+        temp[k++] = arr[j];
 
-    vector<int> L(n1), R(n2);
-    for (int i = 0; i < n1; i++)
-        L[i] = arr[left + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = arr[mid + 1 + j];
-
-    int i = 0, j = 0, k = left;
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
-        } else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
+    for (i = left, k = 0; i <= right; i++, k++)
+        arr[i] = temp[k];
 }
 
-void mergeSort(vector<int>& arr, int left, int right) {
-    if (left < right) {
-        int mid = left + (right - left) / 2;
+void mergeSort(int arr[], int left, int right)
+{
+    if (left < right)
+    {
+        int mid = (left + right) / 2;
         mergeSort(arr, left, mid);
         mergeSort(arr, mid + 1, right);
         merge(arr, left, mid, right);
     }
 }
 
-// Function to perform Linear Search
-int linearSearch(const vector<int>& arr, int target) {
-    for (int i = 0; i < arr.size(); i++) {
-        if (arr[i] == target) {
-            return i; // Return the index of the found element
-        }
-    }
-    return -1; // Return -1 if not found
+int linearSearch(int arr[], int size, int key)
+{
+    for (int i = 0; i < size; i++)
+        if (arr[i] == key)
+            return i;
+    return -1;
 }
 
-// Function to perform Binary Search
-int binarySearch(const vector<int>& arr, int target, int left, int right) {
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        if (arr[mid] == target) {
-            return mid; // Return the index of the found element
-        }
-        if (arr[mid] < target) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
+int binarySearch(int arr[], int size, int key)
+{
+    int left = 0, right = size - 1;
+    while (left <= right)
+    {
+        int mid = (left + right) / 2;
+        if (arr[mid] == key)
+            return mid;
+        (arr[mid] < key) ? left = mid + 1 : right = mid - 1;
     }
-    return -1; // Return -1 if not found
+    return -1;
 }
 
-// Main function to drive the program
-int main() {
-    int choice;
-    vector<int> arr;
-    int n, target;
+void display(int arr[], int size)
+{
+    for (int i = 0; i < size; i++)
+        cout << arr[i] << " ";
+    cout << endl;
+}
 
-    do {
-        cout << "\nMenu:\n";
-        cout << "1. Input Array\n";
-        cout << "2. Selection Sort\n";
-        cout << "3. Merge Sort\n";
-        cout << "4. Linear Search\n";
-        cout << "5. Binary Search\n";
-        cout << "6. Exit\n";
-        cout << "Enter your choice: ";
+int main()
+{
+    int arr[100], size, choice, key;
+
+    cout << "Enter array size: ";
+    cin >> size;
+    cout << "Enter " << size << " elements: ";
+    for (int i = 0; i < size; i++)
+        cin >> arr[i];
+
+    do
+    {
+        cout << "Selection Sort" << endl;
+        cout << "Merge Sort" << endl;
+        cout << "Linear Search" << endl;
+        cout << "Binary Search" << endl;
+        cout << "Display Array" << endl;
+        cout << "Exit" << endl;
+        cout << "Enter Your choice: ";
         cin >> choice;
-
-        switch (choice) {
-            case 1:
-                cout << "Enter the number of elements: ";
-                cin >> n;
-                arr.resize(n);
-                cout << "Enter the elements:\n";
-                for (int i = 0; i < n; i++) {
-                    cin >> arr[i];
-                }
-                break;
-
-            case 2:
-                selectionSort(arr);
-                cout << "Array sorted using Selection Sort:\n";
-                for (int num : arr) {
-                    cout << num << " ";
-                }
-                cout << endl;
-                break;
-
-            case 3:
-                mergeSort(arr, 0, arr.size() - 1);
-                cout << "Array sorted using Merge Sort:\n";
-                for (int num : arr) {
-                    cout << num << " ";
-                }
-                cout << endl;
-                break;
-
-            case 4:
-                cout << "Enter the element to search: ";
-                cin >> target;
-                int linearIndex;
-                linearIndex = linearSearch(arr, target);
-                if (linearIndex != -1) {
-                    cout << "Element found at index: " << linearIndex << endl;
-                } else {
-                    cout << "Element not found."
-                }
-                break;
-            }
+        switch (choice)
+        {
+        case 1:
+            selectionSort(arr, size);
+            break;
+        case 2:
+            mergeSort(arr, 0, size - 1);
+            break;
+        case 3:
+            cout << "Enter element to search: ";
+            cin >> key;
+            cout << ((linearSearch(arr, size, key) != -1) ? "Element found" : "Element not found") << endl;
+            break;
+        case 4:
+            cout << "Enter element to search: ";
+            cin >> key;
+            cout << ((binarySearch(arr, size, key) != -1) ? "Element found" : "Element not found") << endl;
+            break;
+        case 5:
+           display(arr, size);
+            break;
+        case 0:
+            cout << "Exiting..." << endl;
+            break;
+        default:
+            cout << "invelid choice" << endl;
         }
-    }
-                        
+    } while (choice != 0);
 
-
+    return 0;
+}
